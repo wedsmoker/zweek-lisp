@@ -1,0 +1,9 @@
+(def add ((a :int) (b :int)) :int
+  (+ a b))
+
+(def main () :int
+  (let x 10)
+  (let y 20)
+  (print "Hello from Zweek!")
+  (print "10 + 20 =" (add x y))
+  0)
