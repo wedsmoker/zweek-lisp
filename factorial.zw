@@ -1,0 +1,9 @@
+(def factorial ((n :int)) :int
+  (if (<= n 1)
+    1
+    (* n (factorial (- n 1)))))
+
+(def main () :int
+  (print "Factorial of 5:")
+  (print (factorial 5))
+  0)

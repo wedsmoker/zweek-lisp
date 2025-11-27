@@ -3,15 +3,17 @@
 #include <string>
 #include <memory>
 
-int add(int a, int b) {
-    return (a + b);
+int factorial(int n) {
+    if ((n <= 1)) {
+        return 1;
+    } else {
+        return (n * factorial((n - 1)));
+    }
 }
 
 int main() {
-    auto x = 10;
-    auto y = 20;
-    std::cout << "Hello from Zweek!" << std::endl;
-    std::cout << "10 + 20 =" << add(x, y) << std::endl;
+    std::cout << "Factorial of 5:" << std::endl;
+    std::cout << factorial(5) << std::endl;
     return 0;
 }
 

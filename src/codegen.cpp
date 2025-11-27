@@ -98,7 +98,7 @@ std::string Codegen::emit_call(ASTPtr node) {
     
     // Infix Operators
     if (func_name == "+" || func_name == "-" || func_name == "*" || func_name == "/" || 
-        func_name == ">" || func_name == "<" || func_name == "==") {
+        func_name == ">" || func_name == "<" || func_name == ">=" || func_name == "<=" || func_name == "==") {
         if (node->children.size() == 3) {
             return "(" + emit_expression(node->children[1]) + " " + func_name + " " + emit_expression(node->children[2]) + ")";
         }
@@ -131,9 +131,9 @@ std::string Codegen::emit_call(ASTPtr node) {
         std::string else_branch = (node->children.size() > 3) ? emit_expression(node->children[3]) : "";
         
         std::stringstream ss;
-        ss << "if (" << cond << ") {\n        " << then_branch << ";\n    }";
+        ss << "if (" << cond << ") {\n        return " << then_branch << ";\n    }";
         if (!else_branch.empty()) {
-            ss << " else {\n        " << else_branch << ";\n    }";
+            ss << " else {\n        return " << else_branch << ";\n    }";
         }
         return ss.str();
     }

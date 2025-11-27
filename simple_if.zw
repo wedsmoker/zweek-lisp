@@ -1,0 +1,8 @@
+(def test ((n :int)) :int
+  (if (<= n 5)
+    1
+    2))
+
+(def main () :int
+  (print (test 3))
+  0)

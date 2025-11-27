@@ -1,69 +1,128 @@
-# Zweek Lisp (Prototype)
+# Zweek
 
-**A Neuro-Symbolic Compiler for Local AI.**
-*Optimizing C++ generation for small-parameter models through a token-efficient Intermediate Representation.*
+**A Lisp-Dialect Intermediate Representation for AI → C++ Compilation**  
+*Enabling small local LLMs (0.5B-3B params) to generate native code through constrained S-expressions.*
 
 ---
 
-## ⚡ The Problem
-Small local LLMs (0.5B - 3B parameters) struggle to generate valid C++ code. They hallucinate syntax, forget semicolons, and waste context window tokens on verbose boilerplate.
+## The Problem
+Small local LLMs struggle with C++ syntax. They hallucinate, forget semicolons, and waste tokens on verbose boilerplate.
 
-## 🛠 The Solution
-**Zweek** is a strict, Lisp-based dialect designed specifically for AI generation.
-1.  **AI generates Zweek Lisp:** Constrained by GBNF grammars to guarantee 100% valid syntax.
-2.  **Zweek Transpiler:** Parses the IR into an AST and transpiles it into optimized, memory-safe C++17.
-3.  **Native Speed:** Compiles to raw binary using MSVC/GCC.
+## The Solution
+**Zweek** is a minimal Lisp dialect that acts as an AI-friendly bridge to C++:
 
-## 💻 Current Status
-**v0.1.0 - Transpiler Prototype**
-The core C++ engine is functional. It currently handles:
-- ✅ **S-Expression Parsing:** Tokenizing and AST generation.
-- ✅ **Type Inference:** Maps `(let x 10)` to `auto x = 10;`.
-- ✅ **Function Definitions:** Transpiles `(def ...)` to typed C++ functions.
-- ✅ **I/O Streaming:** Flattens `(print ...)` into `std::cout` chains.
-- ✅ **Math:** Recursive expression parsing (`(+ a b)`).
-- ✅ **Auto-Headers:** Automatically injects `#include <iostream>`, `<vector>`, etc.
+```
+AI Model → Zweek S-Expressions → C++ → Native Binary
+```
 
-## 📝 Example
+1. **GBNF Grammar** constrains AI output to guarantee 100% valid syntax
+2. **S-Expression Parsing** converts Lisp-style code `(def add ...)` into an AST
+3. **C++ Transpiler** generates optimized, typed C++17 from the AST
+4. **Native Compilation** produces fast executables via MSVC/GCC
 
-**Input (`hello.zw`):**
+### Why Lisp?
+- **Token-efficient**: `(+ a b)` vs `int result = a + b;`
+- **Grammar-constrained**: S-expressions are trivial to validate with GBNF
+- **AST-ready**: Parentheses define the tree structure explicitly
+
+---
+
+## Example
+
+**Zweek S-Expression Input:**
 ```lisp
-(def add ((a :int) (b :int)) :int
-  (+ a b))
+(def factorial ((n :int)) :int
+  (if (<= n 1)
+    1
+    (* n (factorial (- n 1)))))
 
 (def main () :int
-  (let x 10)
-  (let y 20)
-  (print "Hello from Zweek!")
-  (print "10 + 20 =" (add x y))
+  (print "Factorial of 5:")
+  (print (factorial 5))
   0)
 ```
 
-**Transpiled Output (Generated C++):**
+**Generated C++:**
 ```cpp
 #include <iostream>
 #include <vector>
 #include <string>
 #include <memory>
 
-int add(int a, int b) {
-    return (a + b);
+int factorial(int n) {
+    if ((n <= 1)) {
+        return 1;
+    } else {
+        return (n * factorial((n - 1)));
+    }
 }
 
 int main() {
-    auto x = 10;
-    auto y = 20;
-    std::cout << "Hello from Zweek!" << std::endl;
-    std::cout << "10 + 20 =" << add(x, y) << std::endl;
+    std::cout << "Factorial of 5:" << std::endl;
+    std::cout << factorial(5) << std::endl;
     return 0;
 }
 ```
 
-## 🏗 Architecture
-1.  **Inference:** `llama.cpp` + Qwen-0.5B + Custom GBNF Grammar.
-2.  **IR:** Zweek Lisp (S-Expressions).
-3.  **Compiler:** Custom C++ AST Parser & Transpiler.
-4.  **Backend:** `cl.exe` (Windows) / `g++` (Linux).
+**Output:** `120`
 
 ---
+
+## Current Features (v0.1)
+- ✅ **Typed Functions:** `(def name ((arg :type)...) :return-type body)`
+- ✅ **Variables:** `(let x 10)` → `auto x = 10;`
+- ✅ **Conditionals:** `(if cond then else)` with implicit returns
+- ✅ **Recursion:** Full support for recursive function calls
+- ✅ **Operators:** Math `(+ - * /)`, Comparisons `(< > <= >= ==)`
+- ✅ **I/O:** `(print ...)` → chained `std::cout` statements
+
+---
+
+## Architecture
+
+```
+┌─────────────────┐
+│  llama.cpp      │  Qwen-0.5B generates Zweek code
+│  + GBNF Grammar │  (constrained to valid syntax)
+└────────┬────────┘
+         │ .zw file
+         ▼
+┌─────────────────┐
+│  Lexer          │  Tokenize S-expressions
+│  (lexer.cpp)    │  → LPAREN, RPAREN, SYMBOL, NUMBER, STRING
+└────────┬────────┘
+         │ Tokens
+         ▼
+┌─────────────────┐
+│  Parser         │  Build Abstract Syntax Tree
+│  (parser.cpp)   │  → FUNCTION_DEF, CALL, LITERAL, etc.
+└────────┬────────┘
+         │ AST
+         ▼
+┌─────────────────┐
+│  Code Generator │  Emit C++17 code
+│  (codegen.cpp)  │  → Type mapping, operator handling, etc.
+└────────┬────────┘
+         │ .cpp file
+         ▼
+┌─────────────────┐
+│  MSVC / GCC     │  Compile to native binary
+│  (cl.exe/g++)   │
+└─────────────────┘
+```
+
+---
+
+## Usage
+
+```bash
+# Transpile only
+zweek.exe program.zw
+
+# Compile and run
+zweek.exe program.zw --run
+```
+
+---
+
 *Built for the edge. Powered by C++.*
