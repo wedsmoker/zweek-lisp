@@ -1,3 +1,12 @@
+> [!WARNING]
+> **Post-Mortem: Project Archived**
+> This project is preserved as a proof-of-concept but is **not viable for production**. 
+> 
+> **Why?** 
+> 1. **The Abstraction Leak:** Supporting modern C++ features (RAII, templates, move semantics) required expanding the Zweek syntax until it was just as verbose as C++, negating token savings.
+> 2. **Pre-training Bias:** Small LLMs (0.5B) have seen petabytes of C++ but zero Zweek. They perform better writing broken C++ than valid Zweek because they lack the semantic intuition for this custom dialect.
+> 3. **The Debugging Gap:** C++ compiler errors cannot easily be mapped back to Zweek S-expressions, making it impossible for the AI to self-correct generation errors.
+
 # Zweek
 
 **A Lisp-Dialect Intermediate Representation for AI → C++ Compilation**  
