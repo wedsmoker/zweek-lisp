@@ -1,11 +1,10 @@
 > [!WARNING]
 > **Post-Mortem: Project Archived**
-> This project is preserved as a proof-of-concept but is **not viable for production**. 
-> 
-> **Why?** 
-> 1. **The Abstraction Leak:** Supporting modern C++ features (RAII, templates, move semantics) required expanding the Zweek syntax until it was just as verbose as C++, negating token savings.
-> 2. **Pre-training Bias:** Small LLMs (0.5B) have seen petabytes of C++ but zero Zweek. They perform better writing broken C++ than valid Zweek because they lack the semantic intuition for this custom dialect.
-> 3. **The Debugging Gap:** C++ compiler errors cannot easily be mapped back to Zweek S-expressions, making it impossible for the AI to self-correct generation errors.
+> This project was a fun experiment, but it turns out to be a dead end. I'm archiving it to focus on other tools.
+>
+> **The Realization:**
+> 1. **C++ is complex for a reason:** Trying to hide C++ complexity behind Lisp syntax just created a new set of problems without solving the old ones.
+> 2. **Training Data matters:** AI models are surprisingly good at C++ because they've read the internet. They are bad at Zweek because I invented it yesterday.
 
 # Zweek
 
